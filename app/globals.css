@@ -1,26 +1,60 @@
 @import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #090b0e;
+  --surface: #12151b;
+  --surface-raised: #181d26;
+  --surface-hover: #1f2530;
+  --border: #232a36;
+  --border-subtle: #19202a;
+  --foreground: #f3f4f6;
+  --foreground-muted: #94a3b8;
+  --foreground-dim: #64748b;
+  
+  --brand: #2563eb;
+  --brand-glow: rgba(37, 99, 235, 0.15);
+  
+  --status-verified: #10b981;
+  --status-pending: #f59e0b;
+  --status-critical: #ef4444;
+  --status-active: #0ea5e9;
+  --status-reusable: #8b5cf6;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar for data tables and sidebars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d1016;
+}
+::-webkit-scrollbar-thumb {
+  background: #252d3a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333d4e;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

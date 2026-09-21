@@ -20,6 +20,7 @@ export const ProblemAtlasMap: React.FC<ProblemAtlasMapProps> = ({
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const [mapError, setMapError] = useState<boolean>(false);
+  const [mapStyleMode, setMapStyleMode] = useState<'satellite' | 'dark' | 'osm'>('satellite');
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -74,7 +75,6 @@ export const ProblemAtlasMap: React.FC<ProblemAtlasMapProps> = ({
     challenges.forEach((ch) => {
       const isSelected = ch.id === selectedChallengeId;
 
-      // Custom marker DOM element - wrapper MUST NOT have CSS transform/transitions Clashing with MapLibre translate
       const el = document.createElement('div');
       el.className = 'cursor-pointer';
 
@@ -111,11 +111,33 @@ export const ProblemAtlasMap: React.FC<ProblemAtlasMapProps> = ({
   }, [challenges, selectedChallengeId, onSelectChallenge]);
 
   // Update map style when user toggles style
-  const [mapStyleMode, setMapStyleMode] = useState<'dark' | 'osm'>('dark');
-
   useEffect(() => {
     if (!mapRef.current) return;
-    if (mapStyleMode === 'osm') {
+
+    if (mapStyleMode === 'satellite') {
+      mapRef.current.setStyle({
+        version: 8,
+        sources: {
+          'satellite-tiles': {
+            type: 'raster',
+            tiles: [
+              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            ],
+            tileSize: 256,
+            attribution: 'Tiles &copy; Esri, Maxar, Earthstar Geographics, USDA, USGS',
+          },
+        },
+        layers: [
+          {
+            id: 'satellite-tiles-layer',
+            type: 'raster',
+            source: 'satellite-tiles',
+            minzoom: 0,
+            maxzoom: 19,
+          },
+        ],
+      });
+    } else if (mapStyleMode === 'osm') {
       mapRef.current.setStyle({
         version: 8,
         sources: {
@@ -123,7 +145,7 @@ export const ProblemAtlasMap: React.FC<ProblemAtlasMapProps> = ({
             type: 'raster',
             tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
             tileSize: 256,
-            attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+            attribution: '© OpenStreetMap contributors',
           },
         },
         layers: [
@@ -149,58 +171,71 @@ export const ProblemAtlasMap: React.FC<ProblemAtlasMapProps> = ({
   }
 
   return (
-    <div className="relative w-full h-[550px] lg:h-[650px] rounded-2xl overflow-hidden border border-zinc-800 bg-[#0c0e12]">
+    <div className="relative w-full h-[380px] sm:h-[500px] lg:h-[620px] rounded-2xl overflow-hidden border border-zinc-800 bg-[#0c0e12] shadow-2xl">
       <div ref={mapContainer} className="w-full h-full" />
 
-      {/* Map Header Overlay */}
-      <div className="absolute top-4 left-4 z-20 bg-zinc-900/90 backdrop-blur-md border border-zinc-800 px-3.5 py-2 rounded-xl text-xs space-y-0.5 shadow-lg">
-        <div className="font-bold text-white flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-400" />
-          <span>Jharkhand Living Atlas</span>
+      {/* Map Controls Header Bar Overlay */}
+      <div className="absolute top-3 left-3 right-12 sm:right-auto z-20 flex flex-col sm:flex-row items-start sm:items-center gap-2 max-w-[90vw]">
+        <div className="bg-zinc-900/90 backdrop-blur-md border border-zinc-800 px-3 py-1.5 rounded-xl text-xs space-y-0.5 shadow-lg shrink-0">
+          <div className="font-bold text-white flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <span>GIS Satellite Atlas</span>
+          </div>
+          <div className="text-[10px] text-zinc-400">
+            {challenges.length} problem clusters
+          </div>
         </div>
-        <div className="text-[11px] text-zinc-400">
-          Showing {challenges.length} generalized civic demand clusters
-        </div>
-      </div>
 
-      {/* Map Tile Switcher (OpenStreetMap vs Carto Dark) */}
-      <div className="absolute top-4 right-14 z-20 bg-zinc-900/90 backdrop-blur-md border border-zinc-800 p-1 rounded-xl text-[11px] flex items-center gap-1 shadow-lg">
-        <button
-          type="button"
-          onClick={() => setMapStyleMode('dark')}
-          className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
-            mapStyleMode === 'dark'
-              ? 'bg-blue-600 text-white font-semibold'
-              : 'text-zinc-400 hover:text-white'
-          }`}
-        >
-          Dark Vector
-        </button>
-        <button
-          type="button"
-          onClick={() => setMapStyleMode('osm')}
-          className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
-            mapStyleMode === 'osm'
-              ? 'bg-emerald-600 text-white font-semibold'
-              : 'text-zinc-400 hover:text-white'
-          }`}
-        >
-          OpenStreetMap
-        </button>
+        {/* Map Tile Switcher */}
+        <div className="bg-zinc-900/90 backdrop-blur-md border border-zinc-800 p-1 rounded-xl text-[10px] sm:text-[11px] flex items-center gap-1 shadow-lg shrink-0 overflow-x-auto max-w-full">
+          <button
+            type="button"
+            onClick={() => setMapStyleMode('satellite')}
+            className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
+              mapStyleMode === 'satellite'
+                ? 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-bold shadow'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            📡 Satellite
+          </button>
+          <button
+            type="button"
+            onClick={() => setMapStyleMode('dark')}
+            className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
+              mapStyleMode === 'dark'
+                ? 'bg-blue-600 text-white font-semibold'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            Dark Vector
+          </button>
+          <button
+            type="button"
+            onClick={() => setMapStyleMode('osm')}
+            className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
+              mapStyleMode === 'osm'
+                ? 'bg-emerald-600 text-white font-semibold'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            Street Map
+          </button>
+        </div>
       </div>
 
       {/* Status Legend Overlay */}
-      <div className="absolute bottom-4 left-4 z-20 hidden sm:flex items-center gap-3 bg-zinc-900/90 backdrop-blur-md border border-zinc-800 px-3 py-1.5 rounded-xl text-[11px] text-zinc-300 shadow-lg">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-          <span>Pilot / Deployed</span>
+      <div className="absolute bottom-3 left-3 z-20 flex flex-wrap items-center gap-2 sm:gap-3 bg-zinc-900/90 backdrop-blur-md border border-zinc-800 px-2.5 py-1.5 rounded-xl text-[10px] sm:text-[11px] text-zinc-300 shadow-lg max-w-[85vw]">
+        <div className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-emerald-400" />
+          <span>Pilot/Deployed</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-blue-400" />
-          <span>Verified / Matching</span>
+        <div className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-blue-400" />
+          <span>Verified</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+        <div className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-amber-400" />
           <span>Validating</span>
         </div>
       </div>

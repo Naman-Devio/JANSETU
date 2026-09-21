@@ -1,4 +1,4 @@
-﻿import { ReportAnalysis } from '@/types';
+import { ReportAnalysis } from '@/types';
 
 export async function analyzeWithGemini(text: string, lang: 'en' | 'hi' = 'en'): Promise<ReportAnalysis> {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -22,9 +22,8 @@ Respond with strict JSON only in this exact shape:
   "suggestedExpertise": ["Water Chemistry", "Hydrogeology", "Community Water Systems"]
 }`;
 
-  // Use available gemini-flash-latest or gemini-2.5-flash
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

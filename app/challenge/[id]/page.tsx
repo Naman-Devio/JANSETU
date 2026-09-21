@@ -300,6 +300,7 @@ export default function ChallengeDetailPage({
                         muted
                         playsInline
                         controls
+                        {...({ referrerPolicy: 'no-referrer' } as any)}
                         className="w-full h-56 object-cover rounded-lg border border-zinc-800"
                       />
                     </div>
@@ -307,11 +308,11 @@ export default function ChallengeDetailPage({
 
                   {/* Photo */}
                   {item.type === 'photo' && !item.url.endsWith('.mp4') && (
-                    <div className="pt-2">
+                    <div className="pt-2 flex justify-center bg-black/40 p-2 rounded-xl border border-zinc-800/80">
                       <img
                         src={item.url}
                         alt="Evidence"
-                        className="w-full h-48 object-cover rounded-lg border border-zinc-800"
+                        className="max-h-[520px] w-auto max-w-full object-contain rounded-lg shadow-xl"
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).style.display = 'none';
                         }}

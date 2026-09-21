@@ -47,8 +47,14 @@ let currentDemoUser: { userId: string; role: UserRole } = {
  */
 export async function submitProblemReport(input: {
   text: string;
-  lang: 'en' | 'hi';
-  evidence?: File[];
+  lang?: string;
+  title?: string;
+  domain?: string;
+  category?: string;
+  priority?: string;
+  affectedArea?: string;
+  address?: string;
+  evidence?: any[];
   lat?: number;
   lng?: number;
 }): Promise<{ signalId: string; challengeId: string }> {
@@ -57,31 +63,33 @@ export async function submitProblemReport(input: {
   const signalId = `SIG-${Math.floor(1000 + Math.random() * 9000)}`;
   const challengeId = `JNS-${Math.floor(2000 + Math.random() * 8000)}`;
 
+  const userEvidence = (input.evidence && Array.isArray(input.evidence) && input.evidence.length > 0)
+    ? input.evidence.map((ev: any, idx: number) => ({
+        id: `EV-${Date.now()}-${idx}`,
+        type: (typeof ev === 'object' && ev.type && ev.type.startsWith('video')) ? ('video' as const) : ('photo' as const),
+        url: typeof ev === 'string' ? ev : (ev.url || ''),
+        caption: (typeof ev === 'object' && ev.title) ? ev.title : `Citizen evidence ${idx + 1}`,
+        submittedAt: new Date().toISOString(),
+      }))
+    : [];
+
   const newChallenge: ChallengeDetail = {
     id: challengeId,
-    title: input.text.slice(0, 60) + (input.text.length > 60 ? '...' : ''),
-    domain: 'Water & Sanitation',
+    title: input.title || (input.text.slice(0, 60) + (input.text.length > 60 ? '...' : '')),
+    domain: input.domain || input.category || 'Water & Sanitation',
     status: 'SIGNAL',
-    priority: 'HIGH',
+    priority: (input.priority === 'LOW' || input.priority === 'MEDIUM') ? input.priority : 'HIGH',
     signalCount: 1,
-    evidenceCount: input.evidence ? input.evidence.length : 1,
+    evidenceCount: userEvidence.length,
     confirmationCount: 1,
-    affectedArea: 'Namkum Block, Ranchi District',
+    affectedArea: input.affectedArea || input.address || 'Verified GPS Location',
     lat: input.lat || 23.3441,
     lng: input.lng || 85.3096,
     problemStatement: input.text,
     affectedPopulationEstimate: 2500,
-    requiredExpertise: ['Water Chemistry', 'Rural Water Infrastructure'],
+    requiredExpertise: ['Civic Infrastructure', 'Rural Engineering'],
     isDemoData: true,
-    evidence: [
-      {
-        id: `EV-${Date.now()}`,
-        type: 'photo',
-        url: 'https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=800&q=80',
-        caption: 'Citizen uploaded report evidence',
-        submittedAt: new Date().toISOString(),
-      },
-    ],
+    evidence: userEvidence,
   };
 
   challengesStore.unshift(newChallenge);
@@ -189,8 +197,8 @@ export async function findSimilarChallenges(_input: {
  */
 export async function getMyReports(_userId: string): Promise<ChallengeSummary[]> {
   await new Promise((resolve) => setTimeout(resolve, 300));
-  // Return canonical and any newly created challenges
-  return challengesStore.slice(0, 3).map((c) => ({
+  // Return canonical and all newly created challenges
+  return challengesStore.map((c) => ({
     id: c.id,
     title: c.title,
     domain: c.domain,
@@ -214,7 +222,11 @@ export async function getChallenge(challengeId: string): Promise<ChallengeDetail
   await new Promise((resolve) => setTimeout(resolve, 200));
   const found = challengesStore.find((c) => c.id === challengeId);
   if (found) return found;
-  return CANONICAL_CHALLENGE;
+  return {
+    ...CANONICAL_CHALLENGE,
+    id: challengeId,
+    affectedArea: 'Verified GPS Location',
+  };
 }
 
 /**

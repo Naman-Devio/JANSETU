@@ -13,7 +13,19 @@ export default function MyReportsPage() {
 
   useEffect(() => {
     getMyReports('USR-DEMO-CITIZEN').then((data) => {
-      setReports(data);
+      let localItems: ChallengeSummary[] = [];
+      try {
+        localItems = JSON.parse(localStorage.getItem('jansetu_local_reports') || '[]');
+      } catch (e) {
+        console.warn('LocalStorage load error:', e);
+      }
+
+      // Merge and deduplicate by ID
+      const combinedMap = new Map<string, ChallengeSummary>();
+      localItems.forEach((item) => combinedMap.set(item.id, item));
+      data.forEach((item) => combinedMap.set(item.id, item));
+
+      setReports(Array.from(combinedMap.values()));
       setLoading(false);
     });
   }, []);

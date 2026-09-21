@@ -233,7 +233,7 @@ export default function CitizenReportPage() {
       </div>
 
       {/* Stepper Header */}
-      <div className="grid grid-cols-5 gap-2 text-center text-xs">
+      <div className="flex items-center justify-between gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[10px] sm:text-xs font-semibold">
         {[
           { num: 1, label: lang === 'en' ? '1. Describe' : '१. विवरण' },
           { num: 2, label: lang === 'en' ? '2. Evidence' : '२. साक्ष्य' },
@@ -246,7 +246,7 @@ export default function CitizenReportPage() {
           return (
             <div
               key={item.num}
-              className={`py-2 px-1 rounded-lg border font-medium transition-colors ${
+              className={`flex-1 min-w-[64px] text-center py-2 px-1 rounded-lg border font-medium transition-colors whitespace-nowrap ${
                 isActive
                   ? 'bg-blue-950/60 border-blue-500 text-blue-300 shadow-sm'
                   : isDone

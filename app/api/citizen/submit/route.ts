@@ -18,21 +18,33 @@ export async function POST(req: NextRequest) {
     const challengeId = `JNS-${Math.floor(2000 + Math.random() * 8000)}`;
     const now = new Date().toISOString();
 
+    const problemText = body.text || body.description || body.title || 'Civic issue reported by citizen.';
+    const titleText = body.title || problemText.slice(0, 60) + (problemText.length > 60 ? '...' : '');
+    const latitude = body.lat || body.latitude || 23.3441;
+    const longitude = body.lng || body.longitude || 85.3096;
+
+    let evidenceList: any[] = [];
+    if (Array.isArray(body.evidence)) {
+      evidenceList = body.evidence;
+    } else if (body.mediaUrl) {
+      evidenceList = [{ url: body.mediaUrl, type: 'photo', title: 'Citizen Media Evidence' }];
+    }
+
     try {
       const supabase = createServerClient();
       const { error } = await supabase.from('challenges').insert({
         id: challengeId,
-        title: body.text.slice(0, 60) + (body.text.length > 60 ? '...' : ''),
-        domain: 'Water & Sanitation',
+        title: titleText,
+        domain: body.category || body.domain || 'Water & Sanitation',
         status: 'SIGNAL',
-        priority: 'HIGH',
+        priority: body.priority || 'HIGH',
         signal_count: 1,
-        evidence_count: Array.isArray(body.evidence) ? body.evidence.length : 0,
+        evidence_count: evidenceList.length,
         confirmation_count: 1,
-        affected_area: 'Ranchi District',
-        lat: body.lat || 23.3441,
-        lng: body.lng || 85.3096,
-        problem_statement: body.text,
+        affected_area: body.district ? `${body.district} District` : 'Ranchi District',
+        lat: latitude,
+        lng: longitude,
+        problem_statement: problemText,
         affected_population_estimate: 2500,
         required_expertise: ['Water Chemistry', 'Rural Water Infrastructure'],
         is_demo_data: true,
@@ -42,20 +54,20 @@ export async function POST(req: NextRequest) {
         await supabase.from('problem_signals').insert({
           id: signalId,
           challenge_id: challengeId,
-          text: body.text,
-          lang: body.lang || 'en',
-          lat: body.lat,
-          lng: body.lng,
+          text: problemText,
+          lang: body.lang || 'hi',
+          lat: latitude,
+          lng: longitude,
         });
 
-        if (body.evidence && Array.isArray(body.evidence) && body.evidence.length > 0) {
-          const evidenceRows = body.evidence.map(
+        if (evidenceList.length > 0) {
+          const evidenceRows = evidenceList.map(
             (ev: { url: string; type?: string; title?: string }, idx: number) => ({
               id: `EVD-${Math.floor(1000 + Math.random() * 9000)}-${idx}`,
               challenge_id: challengeId,
-              type: normalizeType(ev.type),
+              type: normalizeType(typeof ev === 'object' ? ev.type : 'photo'),
               url: typeof ev === 'string' ? ev : ev.url,
-              caption: ev.title || `Citizen media evidence ${idx + 1}`,
+              caption: (typeof ev === 'object' ? ev.title : null) || `Citizen media evidence ${idx + 1}`,
               source: 'Citizen Upload',
               submitted_at: now,
             })
@@ -63,7 +75,7 @@ export async function POST(req: NextRequest) {
           await supabase.from('evidence').insert(evidenceRows);
         }
 
-        return NextResponse.json({ signalId, challengeId });
+        return NextResponse.json({ signalId, challengeId, status: 'success' });
       }
 
       console.warn('DB challenge insert error, falling back to mock:', error);
@@ -71,10 +83,19 @@ export async function POST(req: NextRequest) {
       console.warn('DB submission fallback to mock store:', dbErr);
     }
 
-    const fallbackRes = await mockSubmit(body);
-    return NextResponse.json(fallbackRes);
-  } catch (error) {
+    const fallbackRes = await mockSubmit({
+      text: problemText,
+      title: titleText,
+      domain: body.category || body.domain,
+      affectedArea: body.address || (body.district ? `${body.district} District` : undefined),
+      lang: 'hi',
+      lat: latitude,
+      lng: longitude,
+      evidence: evidenceList,
+    });
+    return NextResponse.json({ ...fallbackRes, status: 'success', signalId, challengeId });
+  } catch (error: any) {
     console.error('API submit error:', error);
-    return NextResponse.json({ error: 'Failed to submit report' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to submit report', details: error?.message }, { status: 500 });
   }
 }

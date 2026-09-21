@@ -170,13 +170,12 @@ export default function ProjectWorkspacePage({
             return (
               <div
                 key={st.stage}
-                className={`py-2 px-1 rounded-lg border transition-all ${
-                  isCurrent
+                className={`py-2 px-1 rounded-lg border transition-all ${isCurrent
                     ? 'bg-emerald-600 border-emerald-400 text-white font-bold shadow-md'
                     : isCompleted
-                    ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400'
-                    : 'bg-[#181d26] border-zinc-800 text-zinc-500'
-                }`}
+                      ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400'
+                      : 'bg-[#181d26] border-zinc-800 text-zinc-500'
+                  }`}
               >
                 {isCompleted ? '✓ ' : isCurrent ? '● ' : ''}
                 {st.label}
@@ -187,7 +186,7 @@ export default function ProjectWorkspacePage({
       </div>
 
       {/* WORKSPACE TABS (Section 19) */}
-      <div className="flex items-center gap-2 border-b border-zinc-800 pb-px text-xs font-semibold">
+      <div className="p-1.5 rounded-2xl bg-[#0c0e15]/95 border border-zinc-800 shadow-2xl backdrop-blur-md flex items-center gap-2 overflow-x-auto scrollbar-none shrink-0">
         {(
           [
             { id: 'overview', label: 'Overview' },
@@ -201,11 +200,10 @@ export default function ProjectWorkspacePage({
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2.5 rounded-t-xl transition-colors border-b-2 -mb-px ${
-              activeTab === tab.id
-                ? 'border-blue-500 text-white bg-zinc-900/50'
-                : 'border-transparent text-zinc-400 hover:text-white'
-            }`}
+            className={`px-4 py-2.5 rounded-xl transition-all font-semibold text-xs whitespace-nowrap border ${activeTab === tab.id
+                ? 'bg-gradient-to-r from-blue-600 to-sky-500 text-white font-bold border-blue-400/60 shadow-lg shadow-blue-600/30'
+                : 'bg-[#141923]/90 text-zinc-100 hover:text-white hover:bg-[#1f2636] border-zinc-700/80 shadow-md'
+              }`}
           >
             {tab.label}
           </button>
@@ -290,11 +288,10 @@ export default function ProjectWorkspacePage({
               return (
                 <div
                   key={ms.id}
-                  className={`p-4 rounded-xl border transition-all flex items-start gap-4 ${
-                    isDone
+                  className={`p-4 rounded-xl border transition-all flex items-start gap-4 ${isDone
                       ? 'bg-[#181d26]/60 border-zinc-800/60'
                       : 'bg-[#181d26] border-zinc-700'
-                  }`}
+                    }`}
                 >
                   <button
                     type="button"
@@ -314,11 +311,10 @@ export default function ProjectWorkspacePage({
                         {ms.name}
                       </span>
                       <span
-                        className={`text-[10px] font-mono px-2 py-0.5 rounded ${
-                          isDone
+                        className={`text-[10px] font-mono px-2 py-0.5 rounded ${isDone
                             ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
                             : 'bg-amber-950 text-amber-400 border border-amber-800'
-                        }`}
+                          }`}
                       >
                         {ms.status}
                       </span>
@@ -441,17 +437,20 @@ export default function ProjectWorkspacePage({
                     muted
                     playsInline
                     controls
+                    {...({ referrerPolicy: 'no-referrer' } as any)}
                     className="w-full h-52 object-cover rounded-xl border border-zinc-800"
                   />
                 ) : ev.url !== '#' ? (
-                  <img
-                    src={ev.url}
-                    alt="Pilot testing"
-                    className="w-full h-44 object-cover rounded-xl border border-zinc-800"
-                    onError={(e) => {
-                      e.currentTarget.src = '/assets/1663908248_delhi-rain.jpg';
-                    }}
-                  />
+                  <div className="flex justify-center bg-black/40 p-2 rounded-xl border border-zinc-800">
+                    <img
+                      src={ev.url}
+                      alt="Pilot testing"
+                      className="max-h-60 w-auto max-w-full object-contain rounded-lg"
+                      onError={(e) => {
+                        e.currentTarget.src = '/assets/1663908248_delhi-rain.jpg';
+                      }}
+                    />
+                  </div>
                 ) : null}
               </div>
             ))}

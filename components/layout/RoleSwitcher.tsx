@@ -88,7 +88,7 @@ export const RoleSwitcher: React.FC = () => {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-72 origin-top-right rounded-xl border border-zinc-700 bg-zinc-900/95 backdrop-blur-md shadow-2xl p-1.5 z-50 divide-y divide-zinc-800/80">
+          <div className="absolute right-0 mt-2 w-72 max-w-[88vw] origin-top-right rounded-xl border border-zinc-700 bg-zinc-900/95 backdrop-blur-md shadow-2xl p-1.5 z-50 divide-y divide-zinc-800/80">
             <div className="px-3 py-2 text-[11px] text-zinc-400 font-medium uppercase tracking-wider">
               Switch Persona (SIH Demo Mode)
             </div>

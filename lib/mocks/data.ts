@@ -38,14 +38,14 @@ export const CANONICAL_CHALLENGE: ChallengeDetail = {
     {
       id: 'EV-101',
       type: 'video',
-      url: 'https://cdn.pixabay.com/video/2024/11/07/240320_medium.mp4',
+      url: 'https://vjs.zencdn.net/v/oceans.mp4',
       caption: 'Turbid brown water sample collected from community handpump in Namkum village.',
       submittedAt: '2026-08-12T09:30:00Z',
     },
     {
       id: 'EV-102',
-      type: 'video',
-      url: 'https://videos.pexels.com/video-files/1430660/1430660-hd_1280_720_30fps.mp4',
+      type: 'photo',
+      url: '/assets/water.webp',
       caption: 'Field chemical test strip indicating elevated iron (>1.5 mg/L) and high total dissolved solids.',
       submittedAt: '2026-08-14T11:15:00Z',
     },
@@ -90,7 +90,7 @@ export const SEED_CHALLENGES: ChallengeDetail[] = [
       {
         id: 'EV-201',
         type: 'video',
-        url: 'https://videos.pexels.com/video-files/38262510/16246113_360_640_60fps.mp4',
+        url: 'https://vjs.zencdn.net/v/oceans.mp4',
         caption: 'Discolored acidic drainage pond within 300m of community agricultural land.',
         submittedAt: '2026-08-10T14:20:00Z',
       },
@@ -117,7 +117,7 @@ export const SEED_CHALLENGES: ChallengeDetail[] = [
       {
         id: 'EV-301',
         type: 'video',
-        url: 'https://videos.pexels.com/video-files/32575402/13890490_640_360_30fps.mp4',
+        url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
         caption: 'Washout erosion on the rural approach embankment.',
         submittedAt: '2026-08-18T08:00:00Z',
       },
@@ -144,7 +144,7 @@ export const SEED_CHALLENGES: ChallengeDetail[] = [
       {
         id: 'EV-401',
         type: 'video',
-        url: 'https://videos.pexels.com/video-files/34417959/14580851_640_360_30fps.mp4',
+        url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
         caption: 'Spoiled produce bins outside the cooperative packing center.',
         submittedAt: '2026-08-20T12:00:00Z',
       },
@@ -171,7 +171,7 @@ export const SEED_CHALLENGES: ChallengeDetail[] = [
       {
         id: 'EV-501',
         type: 'video',
-        url: 'https://videos.pexels.com/video-files/4513383/4513383-hd_1280_720_30fps.mp4',
+        url: 'https://vjs.zencdn.net/v/oceans.mp4',
         caption: 'Debris mat blocking the canal weir outlet.',
         submittedAt: '2026-08-05T17:30:00Z',
       },
@@ -194,7 +194,15 @@ export const SEED_CHALLENGES: ChallengeDetail[] = [
     affectedPopulationEstimate: 14000,
     isDemoData: true,
     requiredExpertise: ['Trace Metal Detection', 'Community Health Epidemiology', 'Hydrogeology'],
-    evidence: [],
+    evidence: [
+      {
+        id: 'EV-601',
+        type: 'photo',
+        url: 'https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=800&q=80',
+        caption: 'Borewell handpump water sample exhibiting heavy turbidity and mineral rust sedimentation.',
+        submittedAt: '2026-08-14T09:30:00Z',
+      },
+    ],
   },
   {
     id: 'JNS-1070',
@@ -213,7 +221,15 @@ export const SEED_CHALLENGES: ChallengeDetail[] = [
     affectedPopulationEstimate: 3200,
     isDemoData: true,
     requiredExpertise: ['Air Quality Sensing', 'Solid Waste Regulation', 'Civic Enforcement'],
-    evidence: [],
+    evidence: [
+      {
+        id: 'EV-701',
+        type: 'photo',
+        url: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?auto=format&fit=crop&w=800&q=80',
+        caption: 'Dense smoke haze over school assembly courtyard from open rubber burning.',
+        submittedAt: '2026-08-16T07:15:00Z',
+      },
+    ],
   },
   {
     id: 'JNS-1082',
@@ -232,7 +248,15 @@ export const SEED_CHALLENGES: ChallengeDetail[] = [
     affectedPopulationEstimate: 18500,
     isDemoData: true,
     requiredExpertise: ['Renewable Energy Storage', 'Biomedical Cold-Chain', 'Telemetry Monitoring'],
-    evidence: [],
+    evidence: [
+      {
+        id: 'EV-801',
+        type: 'photo',
+        url: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=800&q=80',
+        caption: 'Solar panel array installed at Primary Health Centre experiencing inverter outages.',
+        submittedAt: '2026-08-19T14:40:00Z',
+      },
+    ],
   },
   {
     id: 'JNS-1090',
@@ -251,7 +275,15 @@ export const SEED_CHALLENGES: ChallengeDetail[] = [
     affectedPopulationEstimate: 5100,
     isDemoData: true,
     requiredExpertise: ['Sedimentation Hydraulics', 'Gravity Pipeline Engineering'],
-    evidence: [],
+    evidence: [
+      {
+        id: 'EV-901',
+        type: 'photo',
+        url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+        caption: 'Mountain stream gravity intake line silted up after torrential rainfall.',
+        submittedAt: '2026-08-22T10:10:00Z',
+      },
+    ],
   },
 ];
 
@@ -429,29 +461,29 @@ export const CANONICAL_PILOT_EVIDENCE: PilotEvidence[] = [
   {
     id: 'PE-01',
     projectId: 'JNP-204',
-    type: 'photo',
-    url: 'https://videos.pexels.com/video-files/13564829/13564829-hd_1280_720_25fps.mp4',
+    type: 'video',
+    url: 'https://vjs.zencdn.net/v/oceans.mp4',
     note: 'Demonstration 200 LPH gravity biochar-alumina column installed at Tiril Ashram community borewell stand.',
   },
   {
     id: 'PE-02',
     projectId: 'JNP-204',
     type: 'test_report',
-    url: '#',
+    url: '/assets/RTR2HFZN.jpg',
     note: 'BIT Mesra Central Testing Laboratory Certified Spectrophotometry: Iron reduced from 1.82 mg/L to 0.14 mg/L (well below WHO 0.3 mg/L threshold).',
   },
   {
     id: 'PE-03',
     projectId: 'JNP-204',
-    type: 'measurement',
-    url: '#',
+    type: 'video',
+    url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
     note: 'Real-time optical turbidity telemetry log: Mean NTU dropped from 18.4 NTU (untreated) to 0.85 NTU (treated output) over 180 continuous operating hours.',
   },
   {
     id: 'PE-04',
     projectId: 'JNP-204',
     type: 'photo',
-    url: 'https://videos.pexels.com/video-files/7647682/7647682-hd_1280_720_30fps.mp4',
+    url: '/assets/water.webp',
     note: 'Field training workshop with 8 village Jal Sahiyas on weekly backwash protocol.',
   },
 ];

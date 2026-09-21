@@ -1,21 +1,17 @@
-﻿export async function generateSpeechAudio(text: string): Promise<Response> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    throw new Error('OPENROUTER_API_KEY is not configured');
-  }
+export async function generateSpeechAudio(text: string): Promise<Response> {
+  const cleanText = text
+    .replace(/[\n\r\t]/g, ' ')
+    .replace(/[*_#`"\\{}]/g, '')
+    .trim()
+    .slice(0, 350);
 
-  const response = await fetch('https://openrouter.ai/api/v1/audio/speech', {
-    method: 'POST',
+  const encoded = encodeURIComponent(cleanText || 'नमस्ते');
+  const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encoded}&tl=hi&client=tw-ob`;
+
+  const response = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://jansetu.gov.in',
-      'X-Title': 'JanSetu TTS',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     },
-    body: JSON.stringify({
-      model: 'fish-audio/s2.1-pro-free:free',
-      input: text.slice(0, 500),
-    }),
   });
 
   return response;

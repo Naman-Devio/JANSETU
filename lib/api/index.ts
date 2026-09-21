@@ -109,6 +109,53 @@ export async function getMyReports(userId: string): Promise<ChallengeSummary[]> 
 
 // 2. CHALLENGES
 export async function getChallenge(challengeId: string): Promise<ChallengeDetail> {
+  if (typeof window !== 'undefined') {
+    try {
+      const localReports = JSON.parse(localStorage.getItem('jansetu_local_reports') || '[]');
+      const foundLocal = localReports.find((r: any) => r.id === challengeId);
+      if (foundLocal) {
+        const userEv = (foundLocal.evidence && Array.isArray(foundLocal.evidence) && foundLocal.evidence.length > 0)
+          ? foundLocal.evidence.map((e: any, idx: number) => ({
+              id: e.id || `EV-${idx + 1}`,
+              type: (e.type && e.type.startsWith('video')) ? ('video' as const) : ('photo' as const),
+              url: e.url || '',
+              caption: e.caption || e.title || 'Citizen Uploaded Evidence',
+              submittedAt: e.submittedAt || new Date().toISOString(),
+            }))
+          : foundLocal.mediaUrl
+          ? [{
+              id: `EV-LOCAL-1`,
+              type: 'photo' as const,
+              url: foundLocal.mediaUrl,
+              caption: 'Citizen Uploaded Evidence',
+              submittedAt: new Date().toISOString(),
+            }]
+          : [];
+
+        return {
+          id: foundLocal.id,
+          title: foundLocal.title || 'Citizen Civic Signal',
+          domain: foundLocal.domain || 'Water & Sanitation',
+          status: foundLocal.status || 'SIGNAL',
+          priority: (foundLocal.priority === 'LOW' || foundLocal.priority === 'MEDIUM') ? foundLocal.priority : 'HIGH',
+          signalCount: foundLocal.signalCount || 1,
+          evidenceCount: userEv.length,
+          confirmationCount: foundLocal.confirmationCount || 1,
+          affectedArea: foundLocal.affectedArea || foundLocal.address || 'Verified GPS Location',
+          lat: foundLocal.lat || 23.3441,
+          lng: foundLocal.lng || 85.3096,
+          problemStatement: foundLocal.problemStatement || foundLocal.description || foundLocal.title,
+          affectedPopulationEstimate: 2500,
+          requiredExpertise: ['Civic Engineering', 'Public Water Infrastructure'],
+          isDemoData: true,
+          evidence: userEv,
+        };
+      }
+    } catch (e) {
+      console.warn('LocalStorage challenge lookup error:', e);
+    }
+  }
+
   return safeFetch(
     `/api/challenges/${challengeId}`,
     undefined,

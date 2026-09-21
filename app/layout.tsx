@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { BackgroundCarousel } from '@/components/layout/BackgroundCarousel';
+import { IntroVideoOverlay } from '@/components/layout/IntroVideoOverlay';
+import { JanSetuAIAssistant } from '@/components/ai/JanSetuAIAssistant';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,11 +34,16 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
+      <head>
+        <Script src="https://js.puter.com/v2/" strategy="beforeInteractive" />
+      </head>
       <body className="min-h-full flex flex-col bg-[#090b0e] text-[#f3f4f6] relative">
+        <IntroVideoOverlay />
         <BackgroundCarousel />
         <Navbar />
         <main className="flex-1 relative z-10">{children}</main>
         <Footer />
+        <JanSetuAIAssistant />
       </body>
     </html>
   );
